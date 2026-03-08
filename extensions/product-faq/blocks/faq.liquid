@@ -1,0 +1,95 @@
+{{ 'faq-styles.css' | asset_url | stylesheet_tag }}
+
+{% assign faq_data_raw = product.metafields.custom.faq_data.value %}
+{% assign faq_settings_raw = shop.metafields.custom.faq_display_settings.value %}
+
+{% comment %} Default settings {% endcomment %}
+{% assign heading_text = block.settings.heading_text %}
+{% assign bg_color = '#f0f3ff' %}
+{% assign question_color = '#1a1a2e' %}
+{% assign answer_color = '#3a3a5c' %}
+{% assign accent_color = '#5a6acf' %}
+{% assign border_color = '#d0d5e8' %}
+{% assign font_size_question = '1.15rem' %}
+{% assign font_size_answer = '1.05rem' %}
+{% assign border_radius = '12px' %}
+
+{% comment %} Override with app settings if available {% endcomment %}
+{% if faq_settings_raw %}
+  {% if faq_settings_raw.backgroundColor %}
+    {% assign bg_color = faq_settings_raw.backgroundColor %}
+  {% endif %}
+  {% if faq_settings_raw.questionColor %}
+    {% assign question_color = faq_settings_raw.questionColor %}
+  {% endif %}
+  {% if faq_settings_raw.answerColor %}
+    {% assign answer_color = faq_settings_raw.answerColor %}
+  {% endif %}
+  {% if faq_settings_raw.accentColor %}
+    {% assign accent_color = faq_settings_raw.accentColor %}
+  {% endif %}
+  {% if faq_settings_raw.borderColor %}
+    {% assign border_color = faq_settings_raw.borderColor %}
+  {% endif %}
+  {% if faq_settings_raw.fontSizeQuestion %}
+    {% assign font_size_question = faq_settings_raw.fontSizeQuestion %}
+  {% endif %}
+  {% if faq_settings_raw.fontSizeAnswer %}
+    {% assign font_size_answer = faq_settings_raw.fontSizeAnswer %}
+  {% endif %}
+  {% if faq_settings_raw.borderRadius %}
+    {% assign border_radius = faq_settings_raw.borderRadius %}
+  {% endif %}
+  {% if faq_settings_raw.headingText %}
+    {% assign heading_text = faq_settings_raw.headingText %}
+  {% endif %}
+{% endif %}
+
+{% if faq_data_raw and faq_data_raw.size > 0 %}
+  <div
+    class="product-faq"
+    style="
+      --faq-bg: {{ bg_color }};
+      --faq-question-color: {{ question_color }};
+      --faq-answer-color: {{ answer_color }};
+      --faq-accent-color: {{ accent_color }};
+      --faq-border-color: {{ border_color }};
+      --faq-font-question: {{ font_size_question }};
+      --faq-font-answer: {{ font_size_answer }};
+      --faq-radius: {{ border_radius }};
+    "
+  >
+    <h2 class="product-faq__title">{{ heading_text }}</h2>
+
+    {% for faq in faq_data_raw %}
+      <details class="product-faq__item">
+        <summary class="product-faq__question">
+          {{ faq.question }}
+          <span class="product-faq__icon">
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+              <path d="M8 3v10M3 8h10" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+            </svg>
+          </span>
+        </summary>
+        <div class="product-faq__answer">
+          {{ faq.answer }}
+        </div>
+      </details>
+    {% endfor %}
+  </div>
+{% endif %}
+
+{% schema %}
+{
+  "name": "Product FAQ",
+  "target": "section",
+  "settings": [
+    {
+      "type": "text",
+      "id": "heading_text",
+      "label": "Heading",
+      "default": "Frequently Asked Questions"
+    }
+  ]
+}
+{% endschema %}

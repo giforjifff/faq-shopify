@@ -1,0 +1,13 @@
+api_version = "2026-04"
+
+[[extensions]]
+
+uid = "c2c65796-0406-e072-85fc-d89f0a7b8b30a6aacdd8"
+
+type = "theme"
+name = "Product FAQ"
+handle = "product-faq"
+
+  [[extensions.targeting]]
+  module = "./blocks/faq.liquid"
+  target = "section"

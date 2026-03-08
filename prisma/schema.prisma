@@ -1,0 +1,74 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Session {
+  id                  String    @id
+  shop                String
+  state               String
+  isOnline            Boolean   @default(false)
+  scope               String?
+  expires             DateTime?
+  accessToken         String
+  userId              BigInt?
+  firstName           String?
+  lastName            String?
+  email               String?
+  accountOwner        Boolean   @default(false)
+  locale              String?
+  collaborator        Boolean?  @default(false)
+  emailVerified       Boolean?  @default(false)
+  refreshToken        String?
+  refreshTokenExpires DateTime?
+}
+
+// FAQ items — reusable across products
+model FAQ {
+  id           String       @id @default(cuid())
+  shop         String
+  question     String
+  answer       String       @db.Text
+  category     String?      // e.g. "Shipping", "Returns", "Product"
+  isGlobal     Boolean      @default(false) // show on ALL products automatically
+  isActive     Boolean      @default(true)
+  displayOrder Int          @default(0)
+  createdAt    DateTime     @default(now())
+  updatedAt    DateTime     @updatedAt
+
+  assignments ProductFAQ[]
+
+  @@index([shop])
+}
+
+// Join table: links FAQs to specific products
+model ProductFAQ {
+  id               String  @id @default(cuid())
+  shop             String
+  shopifyProductId String  // e.g. "gid://shopify/Product/123"
+  faqId            String
+  faq              FAQ     @relation(fields: [faqId], references: [id], onDelete: Cascade)
+  position         Int     @default(0) // ordering within this product
+  enabled          Boolean @default(true)
+
+  @@unique([shopifyProductId, faqId])
+  @@index([shop])
+  @@index([shopifyProductId])
+}
+
+// Display settings per shop — single JSON blob for flexibility
+model DisplaySettings {
+  id        String   @id @default(cuid())
+  shop      String   @unique
+  settings  Json     @default("{\"headingText\":\"Frequently Asked Questions\",\"backgroundColor\":\"#f0f3ff\",\"questionColor\":\"#1a1a2e\",\"answerColor\":\"#3a3a5c\",\"accentColor\":\"#5a6acf\",\"borderColor\":\"#d0d5e8\",\"fontSizeQuestion\":\"1.15rem\",\"fontSizeAnswer\":\"1.05rem\",\"borderRadius\":\"12px\"}")
+  customCSS String?  @db.Text
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}

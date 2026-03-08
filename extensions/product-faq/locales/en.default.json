@@ -1,0 +1,10 @@
+{
+    "en": {
+        "default": {
+            "name": "Product FAQ",
+            "settings": {
+                "heading_text": "Heading"
+            }
+        }
+    }
+}
