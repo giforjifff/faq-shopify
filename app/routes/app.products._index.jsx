@@ -110,7 +110,10 @@ function ProductRow({ product, onNavigate }) {
     const encodedId = encodeURIComponent(product.id);
 
     return (
-        <s-resource-item onClick={() => onNavigate(`/app/products/${encodedId}`)}>
+        <s-resource-item
+            onClick={() => onNavigate(`/app/products/${encodedId}`)}
+            style={{ cursor: "pointer" }}
+        >
             <div style={{
                 display: "flex",
                 alignItems: "center",
@@ -167,6 +170,7 @@ export default function ProductsList() {
 
     return (
         <s-page heading="Product FAQs">
+            <style>{`s-resource-item { cursor: pointer; transition: background-color 0.15s ease; } s-resource-item:hover { background-color: #f6f6f7; }`}</style>
             {products.length === 0 ? (
                 <s-section>
                     <s-empty-state

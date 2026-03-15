@@ -2,6 +2,7 @@ import { useLoaderData, useFetcher, useNavigate } from "react-router";
 import { boundary } from "@shopify/shopify-app-react-router/server";
 import { authenticate } from "../shopify.server";
 import prisma from "../db.server";
+import { StatusDot, getCategoryTone } from "../components/StatusDot";
 
 export const loader = async ({ request }) => {
     const { session } = await authenticate.admin(request);
@@ -69,38 +70,16 @@ function ChevronRight() {
     );
 }
 
-// Small status dot – green when active, grey when inactive
-function StatusDot({ active }) {
-    return (
-        <span
-            title={active ? "Active" : "Inactive"}
-            style={{
-                width: "8px",
-                height: "8px",
-                borderRadius: "50%",
-                backgroundColor: active ? "#008060" : "#C9CCCF",
-                display: "inline-block",
-                flexShrink: 0,
-                marginTop: "2px",
-            }}
-        />
-    );
-}
-
-// Deterministically pick a Polaris badge tone from the category name
-function getCategoryTone(category) {
-    const tones = ["info", "success", "warning", "attention", "magic"];
-    const index = [...category].reduce((acc, ch) => acc + ch.charCodeAt(0), 0) % tones.length;
-    return tones[index];
-}
-
 function FAQRow({ faq, onNavigate, onToggle, onDelete }) {
     const productLabel = faq.isGlobal
         ? "All products"
         : `${faq._count.assignments} product${faq._count.assignments !== 1 ? "s" : ""}`;
 
     return (
-        <s-resource-item onClick={() => onNavigate(`/app/faqs/${faq.id}`)}>
+        <s-resource-item
+            onClick={() => onNavigate(`/app/faqs/${faq.id}`)}
+            style={{ cursor: "pointer" }}
+        >
             <div style={{
                 display: "flex",
                 alignItems: "flex-start",
@@ -171,6 +150,7 @@ export default function FAQList() {
 
     return (
         <s-page heading="FAQs">
+            <style>{`s-resource-item { cursor: pointer; transition: background-color 0.15s ease; } s-resource-item:hover { background-color: #f6f6f7; }`}</style>
             <s-button
                 slot="primary-action"
                 onClick={() => navigate("/app/faqs/new")}
